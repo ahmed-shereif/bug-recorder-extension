@@ -13,7 +13,6 @@ import { TIMEOUTS } from '../shared/constants.js';
 export function mergeSteps(steps) {
   // First, remove duplicates from the data
   const deduplicated = removeDuplicates(steps);
-  console.log('After deduplication:', deduplicated.length, 'steps (removed', steps.length - deduplicated.length, 'duplicates)');
   
   const merged = [];
   let i = 0;
@@ -106,7 +105,6 @@ export function removeDuplicates(steps) {
       
       // If same step within 5 seconds, consider it a duplicate
       if (timeDiff < TIMEOUTS.DUPLICATE_STEP) {
-        console.log('Removing duplicate:', step.type, '-', step.description?.substring(0, 50));
         continue;
       }
       

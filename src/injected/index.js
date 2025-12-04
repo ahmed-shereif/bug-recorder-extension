@@ -9,7 +9,6 @@
   
   // Check if already injected
   if (window.__bugRecorderInjected) {
-    console.log('Bug Recorder [Page]: Already injected, skipping re-injection');
     return;
   }
   window.__bugRecorderInjected = true;
@@ -28,11 +27,9 @@
       isRecording = true;
       captureNetwork = settings?.captureNetwork ?? true;
       recordingSessionId = sessionId || Date.now();
-      console.log('Bug Recorder [Page]: Network capture started (session:', recordingSessionId, ')');
     } else if (action === 'stopRecording') {
       isRecording = false;
       recordingSessionId = null;
-      console.log('Bug Recorder [Page]: Network capture stopped');
     }
   });
   
@@ -156,8 +153,6 @@
       return originalFetch.apply(this, args);
     }
     
-    console.log('Bug Recorder [Page]: Intercepted fetch', method, url);
-    
     const startTime = Date.now();
     let requestBody = null;
     
@@ -254,8 +249,6 @@
       return originalXHRSend.apply(this, arguments);
     }
     
-    console.log('Bug Recorder [Page]: Intercepted XHR', method, url);
-    
     this._bugRecorder.startTime = Date.now();
     this._bugRecorder.requestBody = body ? tryParseJSON(body) : null;
     
@@ -326,8 +319,6 @@
     
     return originalXHRSend.apply(this, arguments);
   };
-  
-  console.log('Bug Recorder [Page]: Network interceptors installed');
 })();
 
 

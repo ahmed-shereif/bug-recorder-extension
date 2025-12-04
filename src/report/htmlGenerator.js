@@ -103,9 +103,7 @@ function generateFilterPanel(stepTypes, stepCount) {
       </div>
     </div>
     <div class="filter-buttons">
-      <button class="btn-all" onclick="selectAll()">✓ Select All</button>
-      <button class="btn-none" onclick="selectNone()">✗ Clear All</button>
-      <button class="btn-compact" id="compactBtn" onclick="toggleCompactMode()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-left: auto;">🎯 Compact View</button>
+      <button class="btn-compact" id="compactBtn" onclick="toggleCompactMode()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">🎯 Compact View</button>
     </div>
     <div class="visible-count" id="visibleCount">Showing ${stepCount} of ${stepCount} steps</div>
   </div>`;

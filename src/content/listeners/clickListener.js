@@ -31,7 +31,6 @@ export function createClickListener(recordStep, state) {
     // Check if this is a duplicate click (same element within 1 second)
     const clickKey = `${selector}-${text}-${buttonName}`;
     if (lastClickTarget === clickKey && (currentTime - lastClickTime) < TIMEOUTS.DUPLICATE_CLICK) {
-      console.log('Bug Recorder: Duplicate click ignored');
       return;
     }
     

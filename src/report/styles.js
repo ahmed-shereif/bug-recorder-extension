@@ -27,10 +27,6 @@ export const reportStyles = `
     .btn-compact:hover { background: linear-gradient(135deg, #5568d3 0%, #6a3ba2 100%); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
     .btn-compact.active { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3); }
     .step.compacted-hidden { display: none !important; }
-    .step.priority-badge::after { content: attr(data-priority); position: absolute; top: 10px; right: 10px; background: #ff9800; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .step[data-priority="critical"]::after { background: #c62828; }
-    .step[data-priority="high"]::after { background: #e65100; }
-    .step[data-priority="medium"]::after { background: #f57c00; }
     .compact-summary { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #81c784; display: none; }
     .compact-summary.active { display: block; }
     .compact-summary h3 { margin: 0 0 8px 0; color: #2e7d32; font-size: 16px; }

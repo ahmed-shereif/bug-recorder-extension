@@ -39,13 +39,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       const response = await chrome.tabs.sendMessage(tab.id, { action: MESSAGES.GET_STATUS });
       if (response && !response.isRecording) {
-        console.log('Popup: Syncing state - content script not recording');
         isRecording = false;
         await setState({ isRecording: false });
         updateUI(isRecording);
       }
     } catch (e) {
-      console.log('Popup: Could not verify recording state with content script');
+      // Could not verify recording state
     }
   }
 });
@@ -72,8 +71,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     return;
   }
 
-  console.log('Starting recording for domain:', domain, 'with settings:', settings);
-
   // Ask background to start or join a domain-scoped session
   let sessionId;
   let isNewSession = true;
@@ -90,7 +87,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     }
     sessionId = response.sessionId;
     isNewSession = !!response.isNewSession;
-    console.log('Popup: Session established. Domain:', response.domain, 'session:', sessionId, 'isNewSession:', isNewSession);
   } catch (e) {
     console.error('Popup: Error starting session via background:', e);
     alert('Could not start recording. Please try again.');
@@ -112,7 +108,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
       isNewSession 
     });
     messageSent = true;
-    console.log('Start message sent to tab');
   } catch (error) {
     console.error('Error sending message:', error);
     // Try injecting content script if not already injected
@@ -146,14 +141,11 @@ document.getElementById('startBtn').addEventListener('click', async () => {
  * Stop recording button handler
  */
 document.getElementById('stopBtn').addEventListener('click', async () => {
-  console.log('Stopping recording');
-  
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
   // Send stop message to content script
   try {
     await chrome.tabs.sendMessage(tab.id, { action: MESSAGES.STOP_RECORDING });
-    console.log('Stop message sent to tab');
   } catch (error) {
     console.error('Error sending stop message:', error);
   }
@@ -175,7 +167,6 @@ document.getElementById('stopBtn').addEventListener('click', async () => {
   // Show step count
   const { steps } = await getState(['steps']);
   updateStepCount(steps?.length || 0);
-  console.log('Recording stopped. Total steps:', steps?.length || 0);
 });
 
 /**
@@ -183,7 +174,6 @@ document.getElementById('stopBtn').addEventListener('click', async () => {
  */
 document.getElementById('exportBtn').addEventListener('click', async () => {
   const { steps, settings } = await getState(['steps', 'settings']);
-  console.log('Export clicked - Steps:', steps?.length || 0);
   
   if (!steps || steps.length === 0) {
     alert('No steps recorded yet. Start recording and perform some actions first.');
@@ -191,7 +181,6 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
   }
   
   const mergedSteps = mergeSteps(steps);
-  console.log('Merged to', mergedSteps.length, 'steps');
   const html = generateReport(mergedSteps, settings || {});
   downloadHTML(html);
 });
@@ -201,7 +190,6 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
  */
 document.getElementById('copyBtn').addEventListener('click', async () => {
   const { steps, settings } = await getState(['steps', 'settings']);
-  console.log('Copy clicked - Steps:', steps?.length || 0);
   
   if (!steps || steps.length === 0) {
     alert('No steps recorded yet. Start recording and perform some actions first.');

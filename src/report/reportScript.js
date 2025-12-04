@@ -566,21 +566,7 @@ export const reportScript = `
       document.getElementById('visibleCount').textContent = 'Showing ' + visibleCount + ' of ' + steps.length + ' steps';
     }
     
-    function selectAll() {
-      const checkboxes = document.querySelectorAll('.filter-option input[type="checkbox"]:not(#filter-validation-only):not(#filter-api-only)');
-      checkboxes.forEach(cb => cb.checked = true);
-      document.getElementById('filter-validation-only').checked = false;
-      document.getElementById('filter-api-only').checked = false;
-      filterSteps();
-    }
-    
-    function selectNone() {
-      const checkboxes = document.querySelectorAll('.filter-option input[type="checkbox"]:not(#filter-screenshots):not(#filter-validation-only):not(#filter-api-only)');
-      checkboxes.forEach(cb => cb.checked = false);
-      document.getElementById('filter-validation-only').checked = false;
-      document.getElementById('filter-api-only').checked = false;
-      filterSteps();
-    }
+
     
     function toggleScreenshots() {
       const showScreenshots = document.getElementById('filter-screenshots').checked;

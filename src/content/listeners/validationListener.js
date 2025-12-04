@@ -41,7 +41,6 @@ export function createValidationListener(recordStep, state) {
             
             // Only capture validation if the field was touched by user
             if (!state.isFieldTouched(inputEl, fieldName, fieldLabel)) {
-              console.log('Bug Recorder: Skipping validation for untouched field:', fieldName || fieldLabel);
               return;
             }
             

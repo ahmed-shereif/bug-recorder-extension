@@ -58,7 +58,8 @@ const mainBuildOptions = {
   minify: !isWatch,
   sourcemap: isWatch ? 'inline' : false,
   target: ['chrome90'],
-  logLevel: 'info'
+  logLevel: 'info',
+  drop: isWatch ? [] : ['console', 'debugger']
 };
 
 // Injected script - runs in page context, no imports needed
@@ -72,7 +73,8 @@ const injectedBuildOptions = {
   minify: !isWatch,
   sourcemap: false,
   target: ['chrome90'],
-  logLevel: 'info'
+  logLevel: 'info',
+  drop: isWatch ? [] : ['console', 'debugger']
 };
 
 async function build() {

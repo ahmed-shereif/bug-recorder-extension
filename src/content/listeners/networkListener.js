@@ -17,8 +17,6 @@ export function createNetworkListener(recordStep, state) {
     const data = e.detail;
     if (!data) return;
     
-    console.log('Bug Recorder: Received network event:', data.method, data.path);
-    
     recordNetworkStep(recordStep, state, {
       url: data.url,
       method: data.method,
@@ -41,8 +39,6 @@ export function createNetworkListener(recordStep, state) {
  */
 function recordNetworkStep(recordStep, state, data) {
   if (!state.isRecording) return;
-  
-  console.log('Bug Recorder: Recording network request:', data.method, data.url);
   
   // Upgrade recent clicks that triggered this API request
   state.upgradeClickPriorityForAPI();
@@ -200,21 +196,16 @@ export function injectNetworkScript(state) {
     const script = document.createElement('script');
     script.src = chrome.runtime.getURL('injected.js');
     script.onload = function() {
-      console.log('Bug Recorder: Injected script loaded');
       state.injectedScriptReady = true;
       setTimeout(() => {
         sendMessageToInjectedScript('startRecording', state.settings, state.recordingSessionId);
       }, 50);
       this.remove();
     };
-    script.onerror = function(e) {
-      console.error('Bug Recorder: Failed to inject script', e);
-    };
     
     (document.head || document.documentElement).appendChild(script);
-    console.log('Bug Recorder: Script injection initiated');
   } catch (e) {
-    console.error('Bug Recorder: Error injecting script:', e);
+    // Error injecting script
   }
 }
 
@@ -228,7 +219,6 @@ export function sendMessageToInjectedScript(action, settings, sessionId) {
   window.dispatchEvent(new CustomEvent('__bugRecorder_control', {
     detail: { action, settings, sessionId }
   }));
-  console.log('Bug Recorder: Sent', action, 'to injected script (session:', sessionId, ')');
 }
 
 

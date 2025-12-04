@@ -158,13 +158,10 @@ let stepQueue = Promise.resolve();
       state.settings = result.settings || {};
       state.steps = result.steps || [];
       state.recordingSessionId = result.recordingSessionId || Date.now();
-      console.log('Bug Recorder: Resuming recording with', state.steps.length, 'steps (session:', state.recordingSessionId, ', domain:', currentDomain, ')');
       initRecording();
-    } else if (result.isRecording) {
-      console.log('Bug Recorder: Active recording exists for different domain', result.activeSessionDomain, '- not auto-resuming on', currentDomain);
     }
   } catch (e) {
-    console.log('Bug Recorder: Extension not ready yet');
+    // Extension not ready yet
   }
 })();
 
@@ -180,13 +177,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       state.settings = message.settings;
       state.recordingSessionId = message.sessionId || Date.now();
       
-      console.log('Bug Recorder: Started recording (session:', state.recordingSessionId, ', isNewSession:', !!message.isNewSession, ')');
-      console.log('Bug Recorder: Settings:', state.settings);
       initRecording();
       sendResponse({ success: true });
     } else if (message.action === MESSAGES.STOP_RECORDING) {
       state.isRecording = false;
-      console.log('Bug Recorder: Stopped recording with', state.steps.length, 'steps');
       removeListeners();
       sendResponse({ success: true });
     } else if (message.action === MESSAGES.GET_STATUS) {
@@ -228,12 +222,9 @@ function resetAllState() {
 function initRecording() {
   removeListeners();
   
-  console.log('Bug Recorder: Initializing with settings:', state.settings);
-  
   if (state.settings.captureClicks) {
     state.listeners.click = createClickListener(recordStep, state);
     document.addEventListener('click', state.listeners.click, true);
-    console.log('Bug Recorder: Click listener attached');
   }
   
   if (state.settings.captureInputs) {
@@ -247,19 +238,16 @@ function initRecording() {
     document.addEventListener('change', state.listeners.change, true);
     document.addEventListener('focus', state.listeners.focus, true);
     document.addEventListener('blur', state.listeners.blur, true);
-    console.log('Bug Recorder: Input listeners attached');
   }
   
   if (state.settings.captureNavigation) {
     state.observers.navigation = createNavigationListener(recordStep, state);
     startNavigationObserver(state.observers.navigation);
-    console.log('Bug Recorder: Navigation listener attached');
   }
   
   if (state.settings.captureScroll) {
     state.listeners.scroll = createScrollListener(recordStep, state);
     document.addEventListener('scroll', state.listeners.scroll, true);
-    console.log('Bug Recorder: Scroll listener attached');
   }
   
   if (state.settings.captureErrors) {
@@ -268,18 +256,15 @@ function initRecording() {
     state.listeners.rejection = errorListeners.rejectionListener;
     window.addEventListener('error', state.listeners.error);
     window.addEventListener('unhandledrejection', state.listeners.rejection);
-    console.log('Bug Recorder: Error listener attached');
   }
   
   if (state.settings.captureValidation) {
     state.observers.validation = createValidationListener(recordStep, state);
     startValidationObserver(state.observers.validation);
-    console.log('Bug Recorder: Validation listener attached');
   }
   
   if (state.settings.captureNetwork) {
     attachNetworkListener();
-    console.log('Bug Recorder: Network listener attached');
   }
   
   // Record initial page load
@@ -353,8 +338,6 @@ function removeListeners() {
     clearTimeout(state.validationCaptureTimeout);
     state.validationCaptureTimeout = null;
   }
-  
-  console.log('Bug Recorder: All listeners removed');
 }
 
 // ==========================================
@@ -380,7 +363,6 @@ function calculatePriority(step) {
 
 async function recordStep(step) {
   if (!state.isRecording) {
-    console.log('Bug Recorder: Not recording, skipping step');
     return;
   }
   
@@ -391,7 +373,6 @@ async function recordStep(step) {
   step.priority = calculatePriority(step);
   
   const stepIndex = state.steps.length;
-  console.log('Bug Recorder: Recording step', stepIndex + 1, ':', step.description, '(priority:', step.priority + ')');
   
   const stepRef = step;
   state.steps.push(stepRef);
@@ -402,7 +383,6 @@ async function recordStep(step) {
   
   stepQueue = stepQueue.then(async () => {
     if (!state.isRecording || state.recordingSessionId !== currentSessionId) {
-      console.log('Bug Recorder: Session changed, skipping async operations for step', stepIndex);
       return;
     }
     
@@ -411,7 +391,6 @@ async function recordStep(step) {
       try {
         stepRef.screenshot = await captureScreenshot();
       } catch (e) {
-        console.warn('Bug Recorder: Screenshot failed, continuing without it');
         stepRef.screenshot = null;
       }
     }
@@ -427,25 +406,17 @@ async function recordStep(step) {
         step: stepRef,
         sessionId: currentSessionId
       });
-
-      if (!response || !response.success) {
-        console.warn('Bug Recorder: Background rejected step persist:', response);
-      }
     } catch (error) {
       if (error.message && error.message.includes('Extension context invalidated')) {
-        console.error('Bug Recorder: Extension reloaded. Please restart recording.');
         state.isRecording = false;
-      } else {
-        console.error('Bug Recorder: Error saving step:', error.message);
       }
     }
   }).catch(err => {
-    console.error('Bug Recorder: Step queue error:', err);
+    // Step queue error
   });
 }
 
 async function captureScreenshot() {
-  console.log('Bug Recorder: Requesting screenshot...');
   try {
     await new Promise(resolve => setTimeout(resolve, 50));
     
@@ -462,19 +433,15 @@ async function captureScreenshot() {
         clearTimeout(timeout);
         
         if (chrome.runtime.lastError) {
-          console.warn('Bug Recorder: Screenshot error:', chrome.runtime.lastError.message);
           resolve(null);
         } else if (response?.screenshot) {
-          console.log('Bug Recorder: Screenshot received, size:', response.screenshot.length);
           resolve(response.screenshot);
         } else {
-          console.warn('Bug Recorder: No screenshot in response');
           resolve(null);
         }
       });
     });
   } catch (e) {
-    console.warn('Bug Recorder: Screenshot exception:', e.message);
     return null;
   }
 }
