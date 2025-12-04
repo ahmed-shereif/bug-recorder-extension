@@ -1,0 +1,17 @@
+{
+  "name": "bug-recorder",
+  "version": "1.0.1",
+  "description": "Capture user interactions and generate bug recreation reports",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "watch": "node scripts/build.js --watch",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.0",
+    "rimraf": "^5.0.0"
+  },
+  "private": true
+}
+
+

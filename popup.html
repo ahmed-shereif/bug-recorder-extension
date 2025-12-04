@@ -2,66 +2,168 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'">
   <style>
-    body { width: 350px; padding: 15px; font-family: Arial, sans-serif; }
-    h2 { margin: 0 0 15px 0; color: #333; }
-    .section { margin-bottom: 15px; padding: 10px; background: #f5f5f5; border-radius: 5px; }
-    .section-title { font-weight: bold; margin-bottom: 8px; }
-    label { display: flex; align-items: center; margin: 5px 0; cursor: pointer; }
-    input[type="checkbox"] { margin-right: 8px; }
-    select { padding: 5px 10px; border-radius: 4px; border: 1px solid #ccc; background: white; margin-left: 8px; flex: 1; }
-    .select-row { display: flex; align-items: center; margin: 8px 0; }
-    .select-row span { font-size: 14px; }
-    button { width: 100%; padding: 10px; margin: 5px 0; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; }
-    .start-btn { background: #4CAF50; color: white; }
-    .stop-btn { background: #f44336; color: white; }
-    .export-btn { background: #2196F3; color: white; }
-    .clear-btn { background: #ff9800; color: white; }
-    .status { padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center; font-weight: bold; }
-    .recording { background: #ffebee; color: #c62828; }
-    .stopped { background: #e8f5e9; color: #2e7d32; }
-    .count { font-size: 12px; color: #666; margin-top: 5px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 320px; height: 580px;
+      font-family: system-ui, sans-serif;
+      background: #fff; color: #333;
+      overflow: hidden;
+    }
+    .header {
+      padding: 12px; text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    .title { font-size: 16px; font-weight: 600; }
+    .status {
+      margin: 12px; padding: 8px;
+      text-align: center; font-size: 13px;
+      border-radius: 4px; border: 1px solid #ddd;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .status.recording { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .status.stopped { background: #fafafa; color: #000; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ef4444; animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .content { padding: 0 12px 12px; }
+    .section { margin-bottom: 12px; }
+    .section-title {
+      font-size: 11px; font-weight: 600;
+      color: #666; margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .option {
+      display: flex; align-items: center;
+      padding: 6px 8px; border: 1px solid #eee;
+      border-radius: 3px; cursor: pointer;
+    }
+    .option input { margin-right: 6px; }
+    .option label {
+      font-size: 11px; cursor: pointer;
+    }
+    .quality {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; border: 1px solid #eee;
+      border-radius: 3px; margin-top: 4px;
+    }
+    .quality label { font-size: 11px; }
+    .quality select {
+      flex: 1; padding: 2px 4px;
+      border: 1px solid #ddd; border-radius: 2px;
+      font-size: 11px;
+    }
+    .actions { display: flex; flex-direction: column; gap: 6px; }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    button {
+      padding: 8px 12px; border: none;
+      border-radius: 3px; font-size: 12px;
+      cursor: pointer; font-weight: 500;
+    }
+    .btn-start { background: #10b981; color: #fff; }
+    .btn-stop { background: #ef4444; color: #fff; }
+    .btn-export { background: #3b82f6; color: #fff; }
+    .btn-clear { background: #f97316; color: #fff; }
+    button:hover {
+      opacity: 0.9;
+    }
+    .stats {
+      margin-top: 8px; padding: 6px;
+      text-align: center; font-size: 11px;
+      color: #666; border-top: 1px solid #eee;
+    }
   </style>
 </head>
 <body>
-  <h2>🎥 ICOS Bug Recorder</h2>
-  
-  <div id="status" class="status stopped">⏹️ Not Recording</div>
-  
-  <div class="section">
-    <div class="section-title">Capture Settings</div>
-    <label><input type="checkbox" id="captureClicks" checked> Clicks</label>
-    <label><input type="checkbox" id="captureInputs" checked> Form Inputs</label>
-    <label><input type="checkbox" id="captureNavigation" checked> Navigation</label>
-    <label><input type="checkbox" id="captureScroll"> Scrolling</label>
-    <label><input type="checkbox" id="captureErrors"> Console Errors</label>
-    <label><input type="checkbox" id="captureValidation" checked> Validation Errors</label>
-    <label><input type="checkbox" id="captureNetwork"> API Requests</label>
+  <div class="header">
+    <div class="title">Bug Recorder</div>
   </div>
   
-  <div class="section">
-    <div class="section-title">Report Options</div>
-    <label><input type="checkbox" id="includeTimestamps" checked> Timestamps</label>
-    <label><input type="checkbox" id="includeUrls" checked> URLs</label>
-    <label><input type="checkbox" id="includeScreenshots" checked> Screenshots</label>
-    <div class="select-row">
-      <span>📸 Quality:</span>
-      <select id="screenshotQuality">
-        <option value="10">Low (smallest file)</option>
-        <option value="25" selected>Medium</option>
-        <option value="50">High</option>
-        <option value="80">Very High (largest file)</option>
-      </select>
+  <div id="status" class="status stopped"><span id="statusDot" class="status-dot" style="display:none;"></span><span id="statusText">Ready</span></div>
+  
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Capture</div>
+      <div class="grid">
+        <div class="option">
+          <input type="checkbox" id="captureClicks" checked>
+          <label for="captureClicks">Mouse Clicks</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="captureInputs" checked>
+          <label for="captureInputs">Form Data</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="captureNavigation" checked>
+          <label for="captureNavigation">Page Changes</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="captureScroll">
+          <label for="captureScroll">Scrolling</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="captureErrors">
+          <label for="captureErrors">console Errors</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="captureValidation" checked>
+          <label for="captureValidation">Validation</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="captureNetwork">
+          <label for="captureNetwork">API Calls</label>
+        </div>
+      </div>
     </div>
+    
+    <div class="section">
+      <div class="section-title">Report</div>
+      <div class="grid">
+        <div class="option">
+          <input type="checkbox" id="includeTimestamps" checked>
+          <label for="includeTimestamps">Time Stamps</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="includeUrls" checked>
+          <label for="includeUrls">Page URLs</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="includeScreenshots" checked>
+          <label for="includeScreenshots">Screenshots</label>
+        </div>
+      </div>
+      <div class="quality">
+        <label>Screenshots Quality:</label>
+        <select id="screenshotQuality">
+          <option value="10">Low</option>
+          <option value="25" selected>Medium</option>
+          <option value="50">High</option>
+          <option value="80">Max</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button id="startBtn" class="btn-start">Start</button>
+      <button id="stopBtn" class="btn-stop" style="display:none;">Stop</button>
+      
+      <div class="btn-row">
+        <button id="exportBtn" class="btn-export">Export Report (HTML)</button>
+        <button id="copyBtn" class="btn-export">Copy Report (Text)</button>
+      </div>
+      
+      <button id="clearBtn" class="btn-clear">Clear All</button>
+    </div>
+    
+    <div class="stats" id="stepCount">No steps recorded</div>
   </div>
-  
-  <button id="startBtn" class="start-btn">▶️ Start Recording</button>
-  <button id="stopBtn" class="stop-btn" style="display:none;">⏹️ Stop Recording</button>
-  <button id="exportBtn" class="export-btn">📥 Download Report (HTML)</button>
-  <button id="copyBtn" class="export-btn">📋 Copy to Clipboard</button>
-  <button id="clearBtn" class="clear-btn">🗑️ Clear Steps</button>
-  
-  <div class="count" id="stepCount">Steps recorded: 0</div>
   
   <script src="popup.js"></script>
 </body>
