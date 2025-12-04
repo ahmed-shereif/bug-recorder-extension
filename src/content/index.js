@@ -124,7 +124,6 @@ const state = {
       if (now - click.timestamp < TIMEOUTS.API_CORRELATION_WINDOW) {
         const step = this.steps[click.stepIndex];
         if (step && step.type === 'click' && step.priority !== PRIORITY.HIGH && step.priority !== PRIORITY.CRITICAL) {
-          console.log('Bug Recorder: Upgrading click priority to high (triggered API):', step.description);
           step.priority = PRIORITY.HIGH;
           step.triggeredAPI = true;
         }
@@ -191,7 +190,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
     }
   } catch (e) {
-    console.error('Bug Recorder: Message handler error:', e);
     sendResponse({ success: false, error: e.message });
   }
   return true;
@@ -422,7 +420,6 @@ async function captureScreenshot() {
     
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
-        console.warn('Bug Recorder: Screenshot timeout after 3s');
         resolve(null);
       }, TIMEOUTS.SCREENSHOT);
       

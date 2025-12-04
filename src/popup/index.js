@@ -66,7 +66,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     const url = new URL(tab.url);
     domain = url.hostname;
   } catch (e) {
-    console.error('Popup: Failed to parse tab URL for domain:', tab.url, e);
     alert('Unable to start recording on this page.');
     return;
   }
@@ -81,14 +80,12 @@ document.getElementById('startBtn').addEventListener('click', async () => {
       settings
     });
     if (!response || !response.success) {
-      console.error('Popup: Failed to start session via background:', response);
       alert('Could not start recording. Please try again.');
       return;
     }
     sessionId = response.sessionId;
     isNewSession = !!response.isNewSession;
   } catch (e) {
-    console.error('Popup: Error starting session via background:', e);
     alert('Could not start recording. Please try again.');
     return;
   }
@@ -109,7 +106,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     });
     messageSent = true;
   } catch (error) {
-    console.error('Error sending message:', error);
     // Try injecting content script if not already injected
     try {
       await chrome.scripting.executeScript({
@@ -125,7 +121,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
       });
       messageSent = true;
     } catch (injectError) {
-      console.error('Error injecting script:', injectError);
       alert('Please refresh the page and try again');
       return;
     }
@@ -147,7 +142,7 @@ document.getElementById('stopBtn').addEventListener('click', async () => {
   try {
     await chrome.tabs.sendMessage(tab.id, { action: MESSAGES.STOP_RECORDING });
   } catch (error) {
-    console.error('Error sending stop message:', error);
+    // Error sending stop message
   }
   
   // Wait for pending steps to be saved
@@ -157,7 +152,7 @@ document.getElementById('stopBtn').addEventListener('click', async () => {
   try {
     await chrome.runtime.sendMessage({ action: MESSAGES.STOP_SESSION });
   } catch (e) {
-    console.error('Popup: Error notifying background to stop session:', e);
+    // Error notifying background
   }
   
   isRecording = false;
