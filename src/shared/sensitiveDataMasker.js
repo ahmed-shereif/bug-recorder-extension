@@ -64,7 +64,12 @@ export function maskStepData(step) {
   const masked = { ...step };
   
   if (masked.details) {
-    masked.details = maskSensitiveData(masked.details);
+    // Check if this is a password field
+    if (masked.details.fieldType === 'password' && masked.details.value) {
+      masked.details = { ...masked.details, value: '••••••••' };
+    } else {
+      masked.details = maskSensitiveData(masked.details);
+    }
   }
   
   return masked;

@@ -25,10 +25,10 @@ export function createInputListener(recordStep, state) {
     state.markFieldAsTouched(target);
     
     const selector = getSelector(target);
-    const value = target.value;
+    const inputType = target.getAttribute('type') || target.tagName.toLowerCase();
+    const value = inputType === 'password' ? '••••••••' : target.value;
     const label = getLabel(target);
     const inputName = target.getAttribute('name') || target.id || '';
-    const inputType = target.getAttribute('type') || target.tagName.toLowerCase();
     const placeholder = target.getAttribute('placeholder') || '';
     const fieldKey = inputName || selector;
     const domPath = getDomBreadcrumb(target);
@@ -96,10 +96,10 @@ export function createChangeListener(recordStep, state) {
     state.markFieldAsTouched(target);
     
     const selector = getSelector(target);
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const inputType = target.getAttribute('type') || target.tagName.toLowerCase();
+    const value = target.type === 'checkbox' ? target.checked : (inputType === 'password' ? '••••••••' : target.value);
     const label = getLabel(target);
     const inputName = target.getAttribute('name') || target.id || '';
-    const inputType = target.getAttribute('type') || target.tagName.toLowerCase();
     const fieldKey = inputName || selector;
     const domPath = getDomBreadcrumb(target);
     
