@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 350px; padding: 15px; font-family: Arial, sans-serif; }
+    h2 { margin: 0 0 15px 0; color: #333; }
+    .section { margin-bottom: 15px; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+    .section-title { font-weight: bold; margin-bottom: 8px; }
+    label { display: flex; align-items: center; margin: 5px 0; cursor: pointer; }
+    input[type="checkbox"] { margin-right: 8px; }
+    select { padding: 5px 10px; border-radius: 4px; border: 1px solid #ccc; background: white; margin-left: 8px; flex: 1; }
+    .select-row { display: flex; align-items: center; margin: 8px 0; }
+    .select-row span { font-size: 14px; }
+    button { width: 100%; padding: 10px; margin: 5px 0; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .start-btn { background: #4CAF50; color: white; }
+    .stop-btn { background: #f44336; color: white; }
+    .export-btn { background: #2196F3; color: white; }
+    .clear-btn { background: #ff9800; color: white; }
+    .status { padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center; font-weight: bold; }
+    .recording { background: #ffebee; color: #c62828; }
+    .stopped { background: #e8f5e9; color: #2e7d32; }
+    .count { font-size: 12px; color: #666; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h2>🎥 ICOS Bug Recorder</h2>
+  
+  <div id="status" class="status stopped">⏹️ Not Recording</div>
+  
+  <div class="section">
+    <div class="section-title">Capture Settings</div>
+    <label><input type="checkbox" id="captureClicks" checked> Clicks</label>
+    <label><input type="checkbox" id="captureInputs" checked> Form Inputs</label>
+    <label><input type="checkbox" id="captureNavigation" checked> Navigation</label>
+    <label><input type="checkbox" id="captureScroll"> Scrolling</label>
+    <label><input type="checkbox" id="captureErrors"> Console Errors</label>
+    <label><input type="checkbox" id="captureValidation" checked> Validation Errors</label>
+    <label><input type="checkbox" id="captureNetwork"> API Requests</label>
+  </div>
+  
+  <div class="section">
+    <div class="section-title">Report Options</div>
+    <label><input type="checkbox" id="includeTimestamps" checked> Timestamps</label>
+    <label><input type="checkbox" id="includeUrls" checked> URLs</label>
+    <label><input type="checkbox" id="includeScreenshots" checked> Screenshots</label>
+    <div class="select-row">
+      <span>📸 Quality:</span>
+      <select id="screenshotQuality">
+        <option value="10">Low (smallest file)</option>
+        <option value="25" selected>Medium</option>
+        <option value="50">High</option>
+        <option value="80">Very High (largest file)</option>
+      </select>
+    </div>
+  </div>
+  
+  <button id="startBtn" class="start-btn">▶️ Start Recording</button>
+  <button id="stopBtn" class="stop-btn" style="display:none;">⏹️ Stop Recording</button>
+  <button id="exportBtn" class="export-btn">📥 Download Report (HTML)</button>
+  <button id="copyBtn" class="export-btn">📋 Copy to Clipboard</button>
+  <button id="clearBtn" class="clear-btn">🗑️ Clear Steps</button>
+  
+  <div class="count" id="stepCount">Steps recorded: 0</div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
