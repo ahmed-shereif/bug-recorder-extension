@@ -85,13 +85,11 @@ async function build() {
       const mainCtx = await esbuild.context(mainBuildOptions);
       const injectedCtx = await esbuild.context(injectedBuildOptions);
       await Promise.all([mainCtx.watch(), injectedCtx.watch()]);
-      console.log('Watching for changes...');
     } else {
       await Promise.all([
         esbuild.build(mainBuildOptions),
         esbuild.build(injectedBuildOptions)
       ]);
-      console.log('Build complete!');
     }
   } catch (error) {
     console.error('Build failed:', error);

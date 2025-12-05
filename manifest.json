@@ -4,7 +4,6 @@
   "version": "1.0.1",
   "description": "Capture user interactions and generate bug recreation reports",
   "permissions": ["activeTab", "storage", "scripting", "tabs", "unlimitedStorage"],
-  "host_permissions": ["<all_urls>"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'"
   },
