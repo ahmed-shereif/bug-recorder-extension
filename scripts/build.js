@@ -4,20 +4,26 @@ const fs = require('fs');
 
 const isWatch = process.argv.includes('--watch');
 
+// Get absolute paths to handle UNC/WSL paths better
+const projectRoot = path.resolve(__dirname, '..');
+const distDir = path.join(projectRoot, 'dist');
+
 // Ensure dist directory exists
-if (!fs.existsSync('dist')) {
-  fs.mkdirSync('dist');
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir, { recursive: true });
 }
 
 // Copy static files to dist
 function copyStaticFiles() {
   // Copy popup.html and update script src
-  let popupHtml = fs.readFileSync('popup.html', 'utf8');
+  const popupHtmlPath = path.join(projectRoot, 'popup.html');
+  let popupHtml = fs.readFileSync(popupHtmlPath, 'utf8');
   popupHtml = popupHtml.replace('src="popup.js"', 'src="popup.js"');
-  fs.writeFileSync('dist/popup.html', popupHtml);
+  fs.writeFileSync(path.join(distDir, 'popup.html'), popupHtml);
   
   // Copy manifest.json and update paths
-  const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+  const manifestPath = path.join(projectRoot, 'manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   manifest.background.service_worker = 'background.js';
   manifest.content_scripts[0].js = ['content.js'];
   manifest.web_accessible_resources[0].resources = ['injected.js'];
@@ -31,14 +37,18 @@ function copyStaticFiles() {
     '48': 'icon-main-48.png',
     '128': 'icon-main-128.png'
   };
-  fs.writeFileSync('dist/manifest.json', JSON.stringify(manifest, null, 2));
+  // Remove host_permissions if present (not needed)
+  if (manifest.host_permissions) {
+    delete manifest.host_permissions;
+  }
+  fs.writeFileSync(path.join(distDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
   
   // Copy icons
   const icons = ['icon-main-16.png', 'icon-main-48.png', 'icon-main-128.png'];
   icons.forEach(icon => {
-    const iconPath = `assets/${icon}`;
+    const iconPath = path.join(projectRoot, 'assets', icon);
     if (fs.existsSync(iconPath)) {
-      fs.copyFileSync(iconPath, `dist/${icon}`);
+      fs.copyFileSync(iconPath, path.join(distDir, icon));
     }
   });
   
@@ -47,13 +57,13 @@ function copyStaticFiles() {
 
 // Main scripts that use imports
 const mainBuildOptions = {
-  entryPoints: [
-    { in: 'src/popup/index.js', out: 'popup' },
-    { in: 'src/background/index.js', out: 'background' },
-    { in: 'src/content/index.js', out: 'content' }
-  ],
+  entryPoints: {
+    'popup': path.join(projectRoot, 'src/popup/index.js'),
+    'background': path.join(projectRoot, 'src/background/index.js'),
+    'content': path.join(projectRoot, 'src/content/index.js')
+  },
   bundle: true,
-  outdir: 'dist',
+  outdir: distDir,
   format: 'iife',
   minify: !isWatch,
   sourcemap: isWatch ? 'inline' : false,
@@ -64,11 +74,11 @@ const mainBuildOptions = {
 
 // Injected script - runs in page context, no imports needed
 const injectedBuildOptions = {
-  entryPoints: [
-    { in: 'src/injected/index.js', out: 'injected' }
-  ],
+  entryPoints: {
+    'injected': path.join(projectRoot, 'src/injected/index.js')
+  },
   bundle: true,
-  outdir: 'dist',
+  outdir: distDir,
   format: 'iife',
   minify: !isWatch,
   sourcemap: false,

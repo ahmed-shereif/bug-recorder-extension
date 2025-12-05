@@ -14,8 +14,7 @@
   "name": "Bug Recorder",
   "version": "1.0.1",
   "description": "Capture user interactions and generate bug recreation reports",
-  "permissions": ["activeTab", "storage", "scripting", "tabs", "unlimitedStorage"],
-  "host_permissions": ["<all_urls>"]
+  "permissions": ["activeTab", "storage", "scripting", "tabs", "unlimitedStorage"]
 }
 ```
 - ✓ Version number correct: 1.0.1
@@ -86,7 +85,6 @@ grep -c "console.log" dist/*.js
 - **scripting**: Required to inject content scripts that capture DOM events and user interactions
 - **tabs**: Required to manage recording state across multiple browser tabs
 - **unlimitedStorage**: Required to store large amounts of data including screenshots and network request/response bodies
-- **<all_urls>**: Required to enable bug recording functionality on any website the user visits
 
 ---
 
