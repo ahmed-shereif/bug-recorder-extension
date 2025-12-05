@@ -30,7 +30,7 @@
 </head>
 <body>
     <h1>Privacy Policy for Bug Recorder Chrome Extension</h1>
-    <p class="last-updated">Last Updated: December 2024</p>
+    <p class="last-updated">Last Updated: January 2025</p>
 
     <h2>1. Overview</h2>
     <p>
@@ -44,14 +44,12 @@
         The Extension collects the following types of data <strong>only when you explicitly start recording</strong>:
     </p>
     <ul>
-        <li><strong>User Activity Data:</strong> Clicks, form inputs, scroll positions, navigation events, and 
-            keystrokes (when enabled) to document bug reproduction steps.</li>
-        <li><strong>Website Content:</strong> Text, images (via screenshots when enabled), and page structure 
-            information to provide context in bug reports.</li>
-        <li><strong>Web History:</strong> URLs of pages visited during recording sessions to document navigation 
-            steps in bug reports.</li>
-        <li><strong>Error Information:</strong> JavaScript console errors, validation messages, and network request 
-            failures to help identify issues.</li>
+        <li><strong>User Activity Data:</strong> Button clicks, link clicks, form inputs (text entry, dropdowns, checkboxes with field labels), and scroll positions to document bug reproduction steps.</li>
+        <li><strong>Navigation Data:</strong> URLs of pages visited during recording sessions, including multi-page workflows, to document navigation steps in bug reports.</li>
+        <li><strong>Error Information:</strong> JavaScript console errors, promise rejections, and form validation messages to help identify issues.</li>
+        <li><strong>Network Activity:</strong> API calls, request/response data, and identification of slow or failed network requests to help debug backend issues.</li>
+        <li><strong>Screenshots:</strong> Visual snapshots of pages (only when screenshot capture is enabled) to show exactly what the page looked like at each step.</li>
+        <li><strong>Timestamps:</strong> Time information for each recorded action (when enabled) to document the sequence of events.</li>
     </ul>
 
     <h2>3. Data Storage</h2>
@@ -79,9 +77,12 @@
         You have full control over the data collected by the Extension:
     </p>
     <ul>
-        <li>You can choose which types of interactions to record (clicks, inputs, navigation, errors, etc.)</li>
+        <li>You can choose which types of interactions to record (clicks, form inputs, navigation, scrolling, console errors, network activity)</li>
         <li>You can enable or disable screenshot capture</li>
+        <li>You can enable or disable timestamps and URL tracking in reports</li>
+        <li>Recording continues seamlessly across multiple pages, but you control when to start and stop</li>
         <li>You can clear all recorded data at any time using the "Clear Steps" button</li>
+        <li>You can export reports as HTML or copy as plain text for sharing</li>
         <li>You can delete the extension at any time, which will remove all stored data</li>
     </ul>
 
