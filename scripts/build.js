@@ -25,7 +25,6 @@ function copyStaticFiles() {
   const manifestPath = path.join(projectRoot, 'manifest.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   manifest.background.service_worker = 'background.js';
-  manifest.content_scripts[0].js = ['content.js'];
   manifest.web_accessible_resources[0].resources = ['injected.js'];
   manifest.action.default_icon = {
     '16': 'icon-main-16.png',

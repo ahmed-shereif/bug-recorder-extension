@@ -32,21 +32,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateStepCount(state.steps?.length || 0);
   loadSettings(state.settings);
   initSettingsListeners();
-  
-  // Verify recording state with content script if recording is active
-  if (isRecording) {
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const response = await chrome.tabs.sendMessage(tab.id, { action: MESSAGES.GET_STATUS });
-      if (response && !response.isRecording) {
-        isRecording = false;
-        await setState({ isRecording: false });
-        updateUI(isRecording);
-      }
-    } catch (e) {
-      // Could not verify recording state
-    }
-  }
 });
 
 /**
@@ -95,40 +80,23 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     updateStepCount(0);
   }
   
-  // Send message to content script
-  let messageSent = false;
+  // Inject content script
   try {
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['content.js']
+    });
+    await new Promise(resolve => setTimeout(resolve, 100));
     await chrome.tabs.sendMessage(tab.id, { 
       action: MESSAGES.START_RECORDING, 
       settings, 
       sessionId, 
       isNewSession 
     });
-    messageSent = true;
-  } catch (error) {
-    // Try injecting content script if not already injected
-    try {
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ['content.js']
-      });
-      await new Promise(resolve => setTimeout(resolve, 100));
-      await chrome.tabs.sendMessage(tab.id, { 
-        action: MESSAGES.START_RECORDING, 
-        settings, 
-        sessionId, 
-        isNewSession 
-      });
-      messageSent = true;
-    } catch (injectError) {
-      alert('Please refresh the page and try again');
-      return;
-    }
-  }
-  
-  if (messageSent) {
     isRecording = true;
     updateUI(isRecording);
+  } catch (error) {
+    alert('Cannot record on this page. Try a regular webpage.');
   }
 });
 

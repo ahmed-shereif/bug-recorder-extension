@@ -3,34 +3,28 @@
   "name": "Bug Recorder",
   "version": "1.0.1",
   "description": "Capture user interactions and generate bug recreation reports",
-  "permissions": ["activeTab", "storage", "scripting", "tabs", "unlimitedStorage"],
+  "permissions": ["activeTab", "storage", "scripting", "unlimitedStorage"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'"
   },
   "icons": {
-    "16": "icon-main-16.png",
-    "48": "icon-main-48.png",
-    "128": "icon-main-128.png"
+    "16": "assets/icon-main-16.png",
+    "48": "assets/icon-main-48.png",
+    "128": "assets/icon-main-128.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icon-main-16.png",
-      "48": "icon-main-48.png",
-      "128": "icon-main-128.png"
+      "16": "assets/icon-main-16.png",
+      "48": "assets/icon-main-48.png",
+      "128": "assets/icon-main-128.png"
     },
     "default_title": "Bug Recorder"
   },
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_start"
-    }
-  ],
+
   "web_accessible_resources": [
     {
       "resources": ["injected.js"],

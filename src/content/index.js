@@ -135,34 +135,7 @@ const state = {
 // Step queue to ensure ordering
 let stepQueue = Promise.resolve();
 
-// ==========================================
-// Initialization
-// ==========================================
 
-(async function init() {
-  try {
-    const result = await chrome.storage.local.get([
-      'isRecording',
-      'settings',
-      'steps',
-      'recordingSessionId',
-      'activeSessionDomain'
-    ]);
-    
-    const currentDomain = location.hostname;
-    
-    // Only auto-resume recording if the active session is for this domain
-    if (result.isRecording && result.activeSessionDomain === currentDomain) {
-      state.isRecording = true;
-      state.settings = result.settings || {};
-      state.steps = result.steps || [];
-      state.recordingSessionId = result.recordingSessionId || Date.now();
-      initRecording();
-    }
-  } catch (e) {
-    // Extension not ready yet
-  }
-})();
 
 // ==========================================
 // Message Handling

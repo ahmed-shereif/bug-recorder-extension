@@ -68,17 +68,13 @@ async function saveRecordingState() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === MESSAGES.CAPTURE_SCREENSHOT) {
     const quality = message.quality || 25;
-    try {
-      chrome.tabs.captureVisibleTab(null, { format: 'jpeg', quality: quality }, (dataUrl) => {
-        if (chrome.runtime.lastError) {
-          sendResponse({ screenshot: null });
-        } else {
-          sendResponse({ screenshot: dataUrl });
-        }
-      });
-    } catch (error) {
-      sendResponse({ screenshot: null });
-    }
+    chrome.tabs.captureVisibleTab({ format: 'jpeg', quality: quality }, (dataUrl) => {
+      if (chrome.runtime.lastError) {
+        sendResponse({ screenshot: null });
+      } else {
+        sendResponse({ screenshot: dataUrl });
+      }
+    });
     return true;
   } else if (message.action === MESSAGES.START_SESSION) {
     (async () => {
